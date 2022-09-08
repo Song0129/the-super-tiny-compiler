@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
-import { tokenizer } from "./tokenizer";
+import { tokenizer, TokenTypes } from "./tokenizer";
 
-test("tokenizer", () => {
+test.skip("tokenizer", () => {
 	const code = `(add 2 (subtract 4 2))`;
 	const tokens = [
 		[
@@ -16,6 +16,13 @@ test("tokenizer", () => {
 			{ type: "paren", value: ")" },
 		],
 	];
+
+	expect(tokenizer(code)).toEqual(tokens);
+});
+
+test("paren", () => {
+	const code = `(`;
+	const tokens = [{ type: TokenTypes.Paren, value: "(" }];
 
 	expect(tokenizer(code)).toEqual(tokens);
 });
