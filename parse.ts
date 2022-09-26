@@ -1,3 +1,4 @@
+import { S } from "vitest/dist/global-fe52f84b";
 import { Token, TokenTypes } from "./tokenizer";
 
 export enum NodeTypes {
@@ -10,12 +11,19 @@ interface Node {
 	type: NodeTypes;
 }
 
+type ChildNode = NumberNode | CallExpression;
+
 interface RootNode extends Node {
-	body: any[];
+	body: ChildNode[];
 }
 
 interface NumberNode extends Node {
 	value: string;
+}
+
+interface CallExpression extends Node {
+	name: string;
+	params: ChildNode[];
 }
 
 function createRootNode(): RootNode {
@@ -31,6 +39,13 @@ function createNumberNode(value): NumberNode {
 		value,
 	};
 }
+function createCallExpressionNode(name: string): CallExpression {
+	return {
+		type: NodeTypes.CallExpression,
+		name,
+		params: [],
+	};
+}
 
 export function parser(tokens: Token[]) {
 	let current = 0;
@@ -41,5 +56,21 @@ export function parser(tokens: Token[]) {
 	if (token.type === TokenTypes.Number) {
 		rootNode.body.push(createNumberNode(token.value));
 	}
+
+	if (token.type === TokenTypes.Paren && token.value === "(") {
+		token = tokens[++current];
+		const node = createCallExpressionNode(token.value);
+
+		token = tokens[++current];
+		while (!(token.type === TokenTypes.Paren && token.value === ")")) {
+			if (token.type === TokenTypes.Number) {
+				node.params.push(createNumberNode(token.value));
+				token = tokens[++current];
+			}
+		}
+		current++;
+		rootNode.body.push(node);
+	}
+
 	return rootNode;
 }
