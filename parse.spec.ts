@@ -2,7 +2,7 @@ import { test, expect } from "vitest";
 import { parser, NodeTypes } from "./parse";
 import { TokenTypes } from "./tokenizer";
 
-test.skip("parser", () => {
+test("parser", () => {
 	// 语法分析
 	const tokens = [
 		{ type: TokenTypes.Paren, value: "(" },
@@ -20,23 +20,23 @@ test.skip("parser", () => {
 		type: NodeTypes.Root,
 		body: [
 			{
-				type: "CallExpression",
+				type: NodeTypes.CallExpression,
 				name: "add",
 				params: [
 					{
-						type: "NumberLiteral",
+						type: NodeTypes.Number,
 						value: "2",
 					},
 					{
-						type: "CallExpression",
+						type: NodeTypes.CallExpression,
 						name: "subtract",
 						params: [
 							{
-								type: "NumberLiteral",
+								type: NodeTypes.Number,
 								value: "4",
 							},
 							{
-								type: "NumberLiteral",
+								type: NodeTypes.Number,
 								value: "2",
 							},
 						],
@@ -98,7 +98,7 @@ test("CallExpression", () => {
 	expect(parser(tokens)).toEqual(ast);
 });
 
-test.skip("Two CallExpression", () => {
+test("Two CallExpression", () => {
 	// 语法分析
 	const tokens = [
 		{ type: TokenTypes.Paren, value: "(" },
