@@ -22,7 +22,9 @@ export function transformer(ast: RootNode) {
 						arguments: [],
 					};
 
-					if (parent?.type === NodeTypes.CallExpression) {
+					node.context = expression.arguments;
+
+					if (parent?.type !== NodeTypes.CallExpression) {
 						expression = {
 							type: "ExpressionStatement",
 							expression,
@@ -33,5 +35,19 @@ export function transformer(ast: RootNode) {
 				}
 			},
 		},
+		NumberLiteral: {
+			enter(node, parent) {
+				if (node.type === NodeTypes.NumberLiteral) {
+					const numberNode: any = {
+						type: "NumberLiteral",
+						value: node.value,
+					};
+
+					parent?.context?.push(numberNode);
+				}
+			},
+		},
 	});
+
+	return newAst;
 }
